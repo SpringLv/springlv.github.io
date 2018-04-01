@@ -55,72 +55,72 @@ Having trouble with Pages? Check out our [documentation](https://help.github.com
    `constructor: Promise,`
    `//触发改变promise状态到FULFILLED`
     `resolve: function (result) {`
-        `this.status = FULFILLED;
-        `this.value = result;
-        `this.done();
+        `this.status = FULFILLED;`
+        `this.value = result;`
+        `this.done();`
     `},
-    `//触发改变promise状态到REJECTED
-    `reject: function (error) {
-        `this.status = REJECTED;
-        `this.value = error;
-    `},
-    `//处理defferd
-    `handle: function (fn) {
-        `if (!fn) {
-            `return;
-        `}
-        `var value = this.value;
-        `var t = this.status;
-        `var p;
-        `if (t == PENDING) {
-             `this.defferd.push(fn);
-        `} else {
-            `if (t == FULFILLED && typeof fn.onfulfiled == 'function') {
-                `p = fn.onfulfiled(value);
-            `}
-            `if (t == REJECTED && typeof fn.onrejected == 'function') {
-                `p = fn.onrejected(value);
-            `}
-        `var promise = fn.promise;
-        `if (promise) {
-            `if (p && p.constructor == Promise) {
-                `p.defferd = promise.defferd;
-            `} else {
-                `p = this;
-                `p.defferd = promise.defferd;
-                `this.done();
-            `}
-        `}
-        `}
-    `},
-    `//触发promise defferd里面需要执行的函数
-    `done: function () {
-        `var status = this.status;
-        `if (status == PENDING) {
-            `return;
-        `}
-        `var defferd = this.defferd;
-        `for (var i = 0; i < defferd.length; i++) {
-            `this.handle(defferd[i]);
-        `}
-    `},
-    `/*储存then函数里面的事件
-    `返回promise对象
-    `defferd函数当前promise对象里面
-    `*/
-    `then: function (success, fail) {
-       `var o = {
-            `onfulfiled: success,
-            `onrejected: fail
-        `};
-        `var status = this.status;
-        `o.promise = new this.constructor(function () {
+    `//触发改变promise状态到REJECTED`
+    `reject: function (error) {`
+        `this.status = REJECTED;`
+        `this.value = error;`
+    `},`
+    `//处理defferd`
+    `handle: function (fn) {`
+        `if (!fn) {`
+            `return;`
+        `}`
+        `var value = this.value;`
+        `var t = this.status;`
+        `var p;`
+        `if (t == PENDING) {`
+             `this.defferd.push(fn);`
+        `} else {`
+            `if (t == FULFILLED && typeof fn.onfulfiled == 'function') {`
+                `p = fn.onfulfiled(value);`
+            `}`
+            `if (t == REJECTED && typeof fn.onrejected == 'function') {`
+                `p = fn.onrejected(value);`
+            `}`
+        `var promise = fn.promise;`
+        `if (promise) {`
+            `if (p && p.constructor == Promise) {`
+                `p.defferd = promise.defferd;`
+            `} else {`
+                `p = this;`
+                `p.defferd = promise.defferd;`
+                `this.done();`
+            `}`
+        `}`
+        `}`
+    `},`
+    `//触发promise defferd里面需要执行的函数`
+    `done: function () {`
+        `var status = this.status;`
+        `if (status == PENDING) {`
+            `return;`
+        `}`
+        `var defferd = this.defferd;`
+        `for (var i = 0; i < defferd.length; i++) {`
+            `this.handle(defferd[i]);`
+        `}`
+    `},`
+    `/*储存then函数里面的事件`
+    `返回promise对象`
+    `defferd函数当前promise对象里面`
+    `*/`
+    `then: function (success, fail) {`
+       `var o = {`
+            `onfulfiled: success,`
+            `onrejected: fail`
+        `};`
+        `var status = this.status;`
+        `o.promise = new this.constructor(function () {`
         `});`
-        `if (status == PENDING) {
+        `if (status == PENDING) {`
            ` this.defferd.push(o);
-        `} else if (status == FULFILLED || status == REJECTED) {
-            `this.handle(o);
-        `}
-        `return o.promise;
-   `}
+        `} else if (status == FULFILLED || status == REJECTED) {`
+            `this.handle(o);`
+        `}`
+        `return o.promise;`
+   `}`
 `};`

@@ -119,3 +119,80 @@ then: function (success, fail) {
 }
 };`
 ```
+### 日历面板 代码片段
+```
+import React from 'react';
+import moment from 'moment';
+import styles from '../routes/ApplyApplication/Index.less';
+
+/**
+ * @class Calender
+ * @extends {React.Component}
+ */
+class Calender extends React.Component {
+  getDaysArray = (days) => {
+    const arr = [];
+    let day = 1;
+    while (day <= days) {
+      arr.push(day++);
+    }
+    return arr;
+  }
+  getDatePlen = (currentDate) => {
+    // currentMomemt
+    const currentMomemt = moment(currentDate);
+    // 本月天数
+    const currentMonthDays = currentMomemt.daysInMonth();
+    // 上一月(moment对象)
+    const preMonth = moment(currentDate).subtract('months', 1);
+    // 年
+    const currentYear = currentMomemt.year();
+    // 上一月天数
+    const preMonthDays = preMonth.daysInMonth();
+    // 本月1号周几
+    const currentMonthWeekDay = moment(`${currentYear}-${moment(currentDate).month() + 1}-01`).weekday();
+    // 本月最后一天周几
+    const currentMonthLastDayWeek = moment(`${currentYear}-${moment(currentDate).month() + 1}-${currentMonthDays}`).weekday();
+    const currentMonthOfDays = this.getDaysArray(currentMonthDays);
+    const preMonthOfDays = this.getDaysArray(preMonthDays);
+    const plenArr = preMonthOfDays
+    .slice(preMonthDays - currentMonthWeekDay, preMonthDays)
+    .concat(currentMonthOfDays)
+    .concat(this.getDaysArray(6 - currentMonthLastDayWeek));
+    return plenArr;
+  }
+  DomRender = (plenArr) => {
+    // 周排序数组
+    const w = ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日'];
+    const backDomUl = [];
+    let backDomli = [];
+    backDomUl.push(<ul className={styles.month_week_day_plen} key="9999">
+      {w.map((i, key) => {
+        return <li key={`${key + 99999}`}>{i}</li>;
+      })}
+    </ul>);
+    plenArr.forEach((item, index) => {
+      backDomli.push(<li key={`li-${index}`}>{item}</li>);
+      if (!((index + 1) % 7)) {
+        backDomUl.push(<ul className={styles.month_week_day_plen} key={`${index}`}>{Object.assign(backDomli)}</ul>);
+        backDomli = [];
+      } else if (index + 1 === plenArr.length) {
+        backDomUl.push(<ul className={styles.month_week_day_plen} key={`${index}`}>{Object.assign(backDomli)}</ul>);
+        backDomli = [];
+      }
+    });
+    return backDomUl;
+  }
+  compose = (f, g) => (x => f(g(x)));
+  render() {
+    const { getDatePlen, compose, DomRender } = this;
+    return (
+      <div>
+        {compose(DomRender, getDatePlen)('2018-10-10')}
+      </div>
+    );
+  }
+}
+
+export default Calender;
+```

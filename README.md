@@ -196,3 +196,20 @@ class Calender extends React.Component {
 
 export default Calender;
 ```
+```
+ul.month_week_day_plen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    list-style: none;
+    margin: 0 !important;
+    padding: 0 !important;
+    li {
+        height: 8vw;
+        flex-basis: 14.2857%;
+        max-width: 14.2857%;
+        border: 1px solid #e0e0e0;
+    }
+  }
+```
+
